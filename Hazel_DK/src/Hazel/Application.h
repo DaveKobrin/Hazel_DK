@@ -1,5 +1,5 @@
 #pragma once
-
+// Hazel applications will inherit from this class to create and run the application on the hazel engine
 #include "Core.h"
 
 namespace Hazel {

@@ -1,3 +1,4 @@
+// Hazel applications will inherit from this class to create and run the application on the hazel engine
 #include "Application.h"
 
 namespace Hazel {

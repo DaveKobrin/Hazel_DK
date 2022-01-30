@@ -1,3 +1,4 @@
+//A generic Hazel application for testing while developing the Hazel Engine
 #include <Hazel.h>
 
 
