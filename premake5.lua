@@ -10,6 +10,11 @@ workspace "Hazel_DK"
 
     
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+-- Include directories relative to root(solution) folder
+IncludeDir = {}
+IncludeDir["GLFW"] = "Hazel_DK/vendor/GLFW/include"
+
+include "Hazel_DK/vendor/GLFW"
 
 project "Hazel_DK"
     location "Hazel_DK"
@@ -18,6 +23,9 @@ project "Hazel_DK"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    pchheader "hzpch.h"
+    pchsource "Hazel_DK/src/hzpch.cpp"
 
     files
     {
@@ -28,7 +36,14 @@ project "Hazel_DK"
     includedirs
     {
         "%{prj.name}/src",
-        "%{prj.name}/vendor/spdlog/include"
+        "%{prj.name}/vendor/spdlog/include",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
+        "opengl32.lib"
     }
 
     filter "system:windows"
@@ -48,7 +63,7 @@ project "Hazel_DK"
         }
 
     filter "configurations:Debug"
-        defines "HZ_DEBUG"
+        defines {"HZ_DEBUG", "HZ_ENABLE_ASSERTS"}
         symbols "On"
 
     filter "configurations:Release"

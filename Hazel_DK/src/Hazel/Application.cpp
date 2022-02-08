@@ -1,27 +1,27 @@
 // Hazel applications will inherit from this class to create and run the application on the hazel engine
+#include "hzpch.h"
 #include "Application.h"
 
-#include "Hazel/Events/ApplicationEvent.h"
-#include "Log.h"
-
-#include <iostream>
+//#include "Hazel/Events/ApplicationEvent.h"
+#include <GLFW/glfw3.h>
 
 namespace Hazel {
-	Application::Application() {
-
+	Application::Application()
+	{
+		m_Window = std::unique_ptr<Window>(Window::Create());
 	}
-	Application::~Application() {
+	Application::~Application()
+	{
 
 	}
 
 	void Application::Run() {
-		long count = 0;
-		WindowResizeEvent e(1280, 720);
-		HZ_TRACE(e.ToString());
 
-		while (true)
+		while (m_Running)
 		{
-			count++;
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+			m_Window->OnUpdate();
 		}
 	}
 }
