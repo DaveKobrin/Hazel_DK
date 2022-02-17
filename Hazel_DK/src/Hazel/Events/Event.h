@@ -40,11 +40,11 @@ namespace Hazel {
 		// fast method to filter events at run time based on bitfield
 		// an event may be more than one category ie. EventCategoryInput && EventCategoryKeyboard
 		None = 0,
-		EventCategoryApplication = 1,//BIT(0),
-		EventCategoryInput       = 2,//BIT(1),
-		EventCategoryKeyboard    = 4,//BIT(2),
-		EventCategoryMouse       = 8,//BIT(3),
-		EventCategoryMouseButton = 16//BIT(4)
+		EventCategoryApplication = BIT(0),
+		EventCategoryInput       = BIT(1),
+		EventCategoryKeyboard    = BIT(2),
+		EventCategoryMouse       = BIT(3),
+		EventCategoryMouseButton = BIT(4)
 	};
 
 	// siimple macros to help create subclass function overrides
@@ -64,6 +64,7 @@ namespace Hazel {
 		virtual std::string ToString() const { return GetName(); }
 
 		inline bool IsInCategory(EventCategory category) { return GetCategoryFlags() & category; }
+		friend std::ostream& operator<<(std::ostream& os, const Event& e);
 
 	protected:
 		bool m_handled = false;
@@ -94,7 +95,7 @@ namespace Hazel {
 		Event& m_Event;
 	};
 
-	inline std::ostream& operator<<(std::ostream& os, Event& e)
+	inline std::ostream& operator<<(std::ostream& os, const Event& e)
 	{
 		return (os << e.ToString());
 	}
