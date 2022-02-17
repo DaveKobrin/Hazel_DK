@@ -66,8 +66,7 @@ namespace Hazel {
 		inline bool IsInCategory(EventCategory category) { return GetCategoryFlags() & category; }
 		friend std::ostream& operator<<(std::ostream& os, const Event& e);
 
-	protected:
-		bool m_handled = false;
+		bool Handled = false;
 	};
 
 
@@ -85,7 +84,7 @@ namespace Hazel {
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_handled = func(*(T*)&m_Event);
+				m_Event.Handled = func(*(T*)&m_Event);
 				return true;
 			}
 			return false;

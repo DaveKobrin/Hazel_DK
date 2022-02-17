@@ -2,10 +2,31 @@
 #include <Hazel.h>
 
 
+class TestLayer : public Hazel::Layer
+{
+public:
+	TestLayer()
+		: Layer("test layer") {}
+
+	void OnUpdate() override
+	{
+		HZ_INFO("TestLayer::OnUpdate");
+	}
+
+	void OnEvent(Hazel::Event& e) override
+	{
+		HZ_TRACE("{0}", e);
+	}
+};
+
+
 class Sandbox : public Hazel::Application
 {
 public:
-	Sandbox() {}
+	Sandbox() 
+	{
+		PushLayer(new TestLayer());
+	}
 	~Sandbox() {}
 };
 
