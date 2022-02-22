@@ -28,6 +28,7 @@ namespace Hazel {
 		// Keyboard Events
 		KeyPressed,
 		KeyReleased,
+		KeyTyped,
 
 		//Mouse Events
 		MouseButtonPressed,
