@@ -30,6 +30,7 @@ namespace Hazel
 
 	void ImGuiLayer::OnDetach()
 	{
+
 	}
 
 	void ImGuiLayer::OnUpdate()
@@ -66,74 +67,6 @@ namespace Hazel
         dispatcher.Dispatch<KeyTypedEvent>(HZ_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
         dispatcher.Dispatch<WindowResizeEvent>(HZ_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
     }
-
-
-#if 0
-
-		HZ_CORE_TRACE("{0}", event);
-
-		ImGuiIO& io = ImGui::GetIO();
-
-		switch (event.GetEventType())
-		{
-		case EventType::None:
-		
-            // Window Events
-		case EventType::WindowClose:
-		
-        case EventType::WindowResize:
-			break;
-		
-        case EventType::WindowFocus:
-			io.AddFocusEvent(true); //temporary add focus events to ApplicationEvent.h or add WindowEvent.h
-			break;
-		
-        case EventType::WindowLostFocus:
-			io.AddFocusEvent(false); //temporary add focus events to ApplicationEvent.h or add WindowEvent.h
-			break;
-		
-        case EventType::WindowMoved:
-			// Application Events
-		
-        case EventType::AppTick:
-		
-        case EventType::AppUpdate:
-		
-        case EventType::AppRender:
-			break;
-
-			// Keyboard Events
-		case EventType::KeyPressed:
-            io.AddKeyEvent(Key2ImGuiKey(((KeyReleasedEvent&)event).GetKeyCode()), true);
-            event.Handled = true;
-            break;
-        case EventType::KeyReleased:
-			io.AddKeyEvent(Key2ImGuiKey(((KeyReleasedEvent&)event).GetKeyCode()), false);
-            event.Handled = true;
-            break;
-
-			//Mouse Events
-		case EventType::MouseButtonPressed:
-            io.AddMouseButtonEvent(((MouseButtonPressedEvent&)event).GetMouseButton(), true);
-            event.Handled = true;
-            break;
-
-		case EventType::MouseButtonReleased:
-            io.AddMouseButtonEvent(((MouseButtonPressedEvent&)event).GetMouseButton(), false);
-            event.Handled = true;
-            break;
-
-		case EventType::MouseMoved:
-            io.AddMousePosEvent(((MouseMovedEvent&)event).GetX(), ((MouseMovedEvent&)event).GetY());
-            event.Handled = true;
-            break;
-
-		case EventType::MouseScrolled:
-            io.AddMouseWheelEvent(((MouseScrolledEvent&)event).GetXOffset(), ((MouseScrolledEvent&)event).GetYOffset());
-            break;
-		}
-	}
-#endif
 
     bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
     {

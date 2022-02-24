@@ -2,8 +2,8 @@
 #include "hzpch.h"
 #include "Application.h"
 
-//#include "Hazel/Events/ApplicationEvent.h"
 #include <glad/glad.h>
+
 
 namespace Hazel {
 
