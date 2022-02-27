@@ -16,6 +16,8 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Hazel_DK/vendor/GLFW/include"
 IncludeDir["Glad"] = "Hazel_DK/vendor/Glad/include"
 IncludeDir["ImGui"] = "Hazel_DK/vendor/ImGui"
+IncludeDir["glm"] = "Hazel_DK/vendor/glm"
+
 
 include "Hazel_DK/vendor/GLFW"
 include "Hazel_DK/vendor/Glad"
@@ -44,7 +46,8 @@ project "Hazel_DK"
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.glm}"
     }
 
     links
@@ -76,21 +79,21 @@ project "Hazel_DK"
         symbols "On"
         staticruntime "off"
         runtime "Debug"
-        buildoptions "/MDd"
+
 
     filter "configurations:Release"
         defines "HZ_RELEASE"
         optimize "On"
         staticruntime "off"
         runtime "Release"
-        buildoptions "/MD"
+
 
     filter "configurations:Dist"
         defines "HZ_DIST"
         optimize "On"
         staticruntime "off"
         runtime "Release"
-        buildoptions "/MD"
+
 
 
 project "Sandbox"
@@ -110,7 +113,8 @@ project "Sandbox"
     includedirs
     {
         "Hazel_DK/vendor/spdlog/include",
-        "Hazel_DK/src"
+        "Hazel_DK/src",
+        "%{IncludeDir.glm}"
     }
 
     links
@@ -132,7 +136,7 @@ project "Sandbox"
         symbols "On"
         staticruntime "off"
         runtime "Debug"
-        buildoptions "/MDd"
+
 
     
     filter "configurations:Release"
@@ -140,7 +144,7 @@ project "Sandbox"
         optimize "On"
         staticruntime "off"
         runtime "Release"
-        buildoptions "/MD"
+
 
     
     filter "configurations:Dist"
@@ -148,7 +152,7 @@ project "Sandbox"
         optimize "On"
         staticruntime "off"
         runtime "Release"
-        buildoptions "/MD"
+
 
 
         
