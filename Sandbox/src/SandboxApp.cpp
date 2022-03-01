@@ -1,5 +1,6 @@
 //A generic Hazel application for testing while developing the Hazel Engine
 #include <Hazel.h>
+#include "ImGui/imgui.h"
 
 class TestLayer : public Hazel::Layer
 {
@@ -16,6 +17,11 @@ public:
 	{
 		//HZ_TRACE("{0}", e);
 	}
+	void OnImGuiRender() override
+	{
+		static bool showdemo = true;
+		ImGui::ShowDemoWindow(&showdemo);
+	}
 };
 
 
@@ -25,7 +31,6 @@ public:
 	Sandbox() 
 	{
 		PushLayer(new TestLayer());
-		PushOverlay(new Hazel::ImGuiLayer());
 	}
 	~Sandbox() {}
 };
