@@ -98,8 +98,8 @@ namespace Hazel
         GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
         glViewport(0, 0, app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
-        glClearColor(1,0,1,1);
-        glClear(GL_COLOR_BUFFER_BIT);
+ //       glClearColor(1,0,1,1);
+ //       glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Update and Render additional Platform Windows
