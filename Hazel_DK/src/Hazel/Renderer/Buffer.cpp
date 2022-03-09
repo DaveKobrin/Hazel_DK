@@ -12,30 +12,31 @@ namespace Hazel
 		switch (Renderer::GetAPI())
 		{
 
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			HZ_CORE_ASSERT(false, "RenderAPI None is not supported!");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLVertexBuffer(vertices, size);
 
 		}
 
 		HZ_CORE_ASSERT(false, "Unknown RendererAPI!")
-		
+			return nullptr;
 	}
 	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI())
 		{
 
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			HZ_CORE_ASSERT(false, "RenderAPI None is not supported!");
 			return nullptr;
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLIndexBuffer(indices, count);
 
 		}
 
 		HZ_CORE_ASSERT(false, "Unknown RendererAPI!")
+			return nullptr;
 	}
 }
