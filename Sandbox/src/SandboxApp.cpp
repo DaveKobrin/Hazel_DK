@@ -2,6 +2,8 @@
 #include <Hazel.h>
 #include "ImGui/imgui.h"
 
+#include "glm/gtc/matrix_transform.hpp"
+
 class TestLayer : public Hazel::Layer
 {
 
@@ -35,10 +37,10 @@ public:
 		m_SquareVA.reset(Hazel::VertexArray::Create());
 
 		float sqVertices[4 * 7] = {
-			-0.75f, -0.75f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
-			 0.75f, -0.75f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
-			 0.75f,  0.75f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
-			-0.75f,  0.75f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
+			 0.5f,  0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f
 		};
 
 		uint32_t sqIndices[6] = { 0, 1, 2, 2, 3, 0 };
@@ -61,6 +63,7 @@ public:
 				layout(location = 1) in vec4 a_Color;
 
 				uniform mat4 u_ViewProjection;
+				uniform mat4 u_Transform;
 
 				out vec3 v_Position;
 				out vec4 v_Color;
@@ -69,7 +72,7 @@ public:
 				{
 					v_Position = a_Position;
 					v_Color = a_Color;
-					gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+					gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 				}
 			)";
 
@@ -100,31 +103,45 @@ public:
 	{
 	}
 	
-	virtual void OnUpdate() override
+	virtual void OnUpdate(Hazel::DeltaTime delta) override
 	{
+
+//		HZ_INFO("Delta time is {0}s ({1}milliseconds", delta.GetSeconds(), delta.GetMillis());
+
 		if (Hazel::Input::IsKeyPressed(HZ_KEY_A) || Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMoveSpeed;
+			m_CameraPosition.x -= m_CameraMoveSpeed * delta;
 		else if (Hazel::Input::IsKeyPressed(HZ_KEY_D) || Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMoveSpeed;
+			m_CameraPosition.x += m_CameraMoveSpeed * delta;
 		if (Hazel::Input::IsKeyPressed(HZ_KEY_W) || Hazel::Input::IsKeyPressed(HZ_KEY_UP))
-			m_CameraPosition.y += m_CameraMoveSpeed;
+			m_CameraPosition.y += m_CameraMoveSpeed * delta;
 		else if (Hazel::Input::IsKeyPressed(HZ_KEY_S) || Hazel::Input::IsKeyPressed(HZ_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMoveSpeed;
+			m_CameraPosition.y -= m_CameraMoveSpeed * delta;
 		if (Hazel::Input::IsKeyPressed(HZ_KEY_Q))
-			m_CameraRotation += m_CameraRotationSpeed;
+			m_CameraRotation += m_CameraRotationSpeed * delta;
 		else if (Hazel::Input::IsKeyPressed(HZ_KEY_E))
-			m_CameraRotation -= m_CameraRotationSpeed;
+			m_CameraRotation -= m_CameraRotationSpeed * delta;
 
 
 		camera.SetPosition(m_CameraPosition);
 		camera.SetRotation(m_CameraRotation);
 
+		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
 		Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		Hazel::RenderCommand::Clear();
 
 		Hazel::Renderer::BeginScene(camera);
+		for (int y = 0; y < 20; ++y)
+		{
+			for (int x = 0; x < 20; ++x)
+			{
+				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
 
-		Hazel::Renderer::Submit(m_SquareVA, m_Shader);
+				Hazel::Renderer::Submit(m_SquareVA, m_Shader, transform);
+			}
+		}
+
 		Hazel::Renderer::Submit(m_VertexArray, m_Shader);
 
 		Hazel::Renderer::EndScene();
@@ -146,9 +163,9 @@ private:
 
 	Hazel::OrthographicCamera camera;
 	glm::vec3 m_CameraPosition;
-	float m_CameraMoveSpeed = 0.1f;
+	float m_CameraMoveSpeed = 4.0f;
 	float m_CameraRotation = 0.0f;
-	float m_CameraRotationSpeed = 1.0f;
+	float m_CameraRotationSpeed = 180.0f;
 
 };
 

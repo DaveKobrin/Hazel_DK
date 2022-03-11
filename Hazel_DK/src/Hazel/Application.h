@@ -7,6 +7,8 @@
 #include "Hazel/LayerStack.h"
 #include "Hazel/ImGui/ImGuiLayer.h"
 
+#include "Hazel/Core/Time.h"
+
 namespace Hazel {
 	class HAZEL_API Application
 	{
@@ -31,6 +33,8 @@ namespace Hazel {
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
+		std::shared_ptr<Time> m_Time;
+		float m_LastFrameComplete;
 
 		static Application* s_Instance;
 	};

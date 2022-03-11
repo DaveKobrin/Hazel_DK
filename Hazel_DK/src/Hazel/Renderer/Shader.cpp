@@ -1,7 +1,8 @@
 #include "hzpch.h"
 #include "Shader.h"
 
-#include "Hazel/Renderer/Renderer.h"
+#include "Hazel/Core/SystemInfo.h"
+//#include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Platform/OpenGL/OpenGLShader.h"
 
 namespace Hazel
@@ -9,19 +10,19 @@ namespace Hazel
 	Shader* Shader::Create(const std::string& vertSrc, const std::string& fragSrc)
 	{
 		{
-			switch (Renderer::GetAPI())
+			switch (SystemInfo::GetRenderingAPI())
 			{
 
-			case RendererAPI::API::None:
+			case SystemInfo::RenderingAPI::None:
 				HZ_CORE_ASSERT(false, "RenderAPI None is not supported!");
 				return nullptr;
-			case RendererAPI::API::OpenGL:
+			case SystemInfo::RenderingAPI::OpenGL:
 				return new OpenGLShader(vertSrc, fragSrc);
 
+			default:
+				HZ_CORE_ASSERT(false, "RenderAPI is not currently supported!");
+				return nullptr;
 			}
-
-			HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
-			return nullptr;
 		};
 	}
 }

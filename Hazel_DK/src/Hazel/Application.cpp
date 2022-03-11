@@ -17,9 +17,12 @@ namespace Hazel {
 		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window->SetVSync(true);
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+
+		m_Time.reset(Time::Create());
 
 	}
 	Application::~Application()
@@ -56,9 +59,12 @@ namespace Hazel {
 
 		while (m_Running)
 		{
+			float currentTime = m_Time->GetTime();
+			DeltaTime delta = currentTime - m_LastFrameComplete;
+			m_LastFrameComplete = currentTime;
 
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(delta);
 
 			m_ImGuiLayer->Begin();
 			

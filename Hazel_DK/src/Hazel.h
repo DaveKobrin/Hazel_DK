@@ -12,6 +12,7 @@
 #include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Renderer/OrthographicCamera.h"
 
+#include "Hazel/Core/Time.h"
 
 //--- Entry Point ---------------------
 #include "Hazel/EntryPoint.h"
