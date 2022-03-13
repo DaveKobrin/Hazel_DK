@@ -2,7 +2,9 @@
 #include <Hazel.h>
 #include "ImGui/imgui.h"
 
-#include "glm/gtc/matrix_transform.hpp"
+#include "Hazel/Platform/OpenGL/OpenGLShader.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class TestLayer : public Hazel::Layer
 {
@@ -20,7 +22,7 @@ public:
 		};
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		std::shared_ptr<Hazel::VertexBuffer> VertexBuffer;
+		Hazel::Ref<Hazel::VertexBuffer> VertexBuffer;
 		VertexBuffer.reset(Hazel::VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		VertexBuffer->SetLayout({
@@ -28,7 +30,7 @@ public:
 			{ Hazel::ShaderDataType::Float4, "a_Color"}
 			});
 
-		std::shared_ptr<Hazel::IndexBuffer> IndexBuffer;
+		Hazel::Ref<Hazel::IndexBuffer> IndexBuffer;
 		IndexBuffer.reset(Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 
 		m_VertexArray->AddVertexBuffer(VertexBuffer);
@@ -36,11 +38,11 @@ public:
 
 		m_SquareVA.reset(Hazel::VertexArray::Create());
 
-		float sqVertices[4 * 7] = {
-			-0.5f, -0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
-			 0.5f,  0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 0.8f, 0.8f, 0.8f, 1.0f
+		float sqVertices[4 * 5] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
 		uint32_t sqIndices[6] = { 0, 1, 2, 2, 3, 0 };
@@ -48,7 +50,7 @@ public:
 
 		VertexBuffer->SetLayout({
 			{ Hazel::ShaderDataType::Float3, "a_Position" },
-			{ Hazel::ShaderDataType::Float4, "a_Color"}
+			{ Hazel::ShaderDataType::Float2, "a_TexCord"}
 			});
 
 		IndexBuffer.reset(Hazel::IndexBuffer::Create(sqIndices, sizeof(sqIndices) / sizeof(uint32_t)));
@@ -83,15 +85,85 @@ public:
 				in vec3 v_Position;
 				in vec4 v_Color;
 
+				uniform vec4 u_Color = vec4(1.0, 1.0, 1.0, 1.0);;
+
 				void main()
 				{
 					color = vec4(v_Position * 0.5 + 0.5, 1.0);
-					color = v_Color;
+					color = v_Color * u_Color;
 				}
 			)";
 
 
 		m_Shader.reset(Hazel::Shader::Create(vertSrc, fragSrc));
+
+		std::string flatShaderVertSrc = R"(
+				#version 330 core
+				
+				layout(location = 0) in vec3 a_Position;
+
+				uniform mat4 u_ViewProjection;
+				uniform mat4 u_Transform;
+
+				out vec3 v_Position;
+
+				void main()
+				{
+					v_Position = a_Position;
+					gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+				}
+			)";
+
+		std::string flatShaderFragSrc = R"(
+				#version 330 core
+				
+				layout(location = 0) out vec4 color;
+				in vec3 v_Position;
+
+				uniform vec4 u_Color = vec4(1.0, 1.0, 1.0, 1.0);;
+
+				void main()
+				{
+					color = u_Color;
+				}
+			)";
+
+
+		m_FlatShader.reset(Hazel::Shader::Create(flatShaderVertSrc, flatShaderFragSrc));
+		
+		std::string textureShaderVertSrc = R"(
+				#version 330 core
+				
+				layout(location = 0) in vec3 a_Position;
+				layout(location = 1) in vec2 a_TexCord;
+
+				uniform mat4 u_ViewProjection;
+				uniform mat4 u_Transform;
+
+				out vec2 v_TexCord;
+
+				void main()
+				{
+					v_TexCord = a_TexCord;
+					gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+				}
+			)";
+
+		std::string textureShaderFragSrc = R"(
+				#version 330 core
+				
+				layout(location = 0) out vec4 color;
+
+				in vec2 TexCord;
+
+				void main()
+				{
+					color = vec4(v_Color,0.0, 1.0);
+				}
+			)";
+
+
+		m_TextureShader.reset(Hazel::Shader::Create(textureShaderVertSrc, textureShaderFragSrc));
 	}
 	
 	virtual void OnAttach() override
@@ -130,6 +202,9 @@ public:
 		Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		Hazel::RenderCommand::Clear();
 
+		m_Shader->Bind();
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_Shader)->UploadUniformFloat4("u_Color", m_SquareColor);
+
 		Hazel::Renderer::BeginScene(camera);
 		for (int y = 0; y < 20; ++y)
 		{
@@ -138,11 +213,15 @@ public:
 				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
 
-				Hazel::Renderer::Submit(m_SquareVA, m_Shader, transform);
+				Hazel::Renderer::Submit(m_SquareVA, m_FlatShader, transform);
 			}
 		}
 
-		Hazel::Renderer::Submit(m_VertexArray, m_Shader);
+		glm::vec3 pos( 0.0f, 0.0f, 0.0f);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * glm::scale(glm::mat4(1.0f), glm::vec3(1.5f));
+		Hazel::Renderer::Submit(m_SquareVA, m_TextureShader, transform);
+		//Triangle
+		//Hazel::Renderer::Submit(m_VertexArray, m_Shader);
 
 		Hazel::Renderer::EndScene();
 	}
@@ -152,14 +231,19 @@ public:
 	}
 	virtual void OnImGuiRender() override
 	{
+		ImGui::Begin("Settings");
+
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
 //		static bool showdemo = true;
 //		ImGui::ShowDemoWindow(&showdemo);
+		ImGui::End();
 	}
 
 private:
-	std::shared_ptr<Hazel::Shader> m_Shader;
-	std::shared_ptr<Hazel::VertexArray> m_VertexArray;
-	std::shared_ptr<Hazel::VertexArray> m_SquareVA;
+	Hazel::Ref<Hazel::Shader> m_Shader, m_TextureShader, m_FlatShader;
+	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
+	Hazel::Ref<Hazel::VertexArray> m_SquareVA;
 
 	Hazel::OrthographicCamera camera;
 	glm::vec3 m_CameraPosition;
@@ -167,6 +251,7 @@ private:
 	float m_CameraRotation = 0.0f;
 	float m_CameraRotationSpeed = 180.0f;
 
+	glm::vec4 m_SquareColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
 
 
