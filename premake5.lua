@@ -17,11 +17,13 @@ IncludeDir["GLFW"] = "Hazel_DK/vendor/GLFW/include"
 IncludeDir["Glad"] = "Hazel_DK/vendor/Glad/include"
 IncludeDir["ImGui"] = "Hazel_DK/vendor/ImGui"
 IncludeDir["glm"] = "Hazel_DK/vendor/glm"
+IncludeDir["stb_image"] = "Hazel_DK/vendor/stb_image"
 
-
-include "Hazel_DK/vendor/GLFW"
-include "Hazel_DK/vendor/Glad"
-include "Hazel_DK/vendor/ImGui"
+group "Dependencies"
+    include "Hazel_DK/vendor/GLFW"
+    include "Hazel_DK/vendor/Glad"
+    include "Hazel_DK/vendor/ImGui"
+group ""
 
 project "Hazel_DK"
     location "Hazel_DK"
@@ -39,7 +41,11 @@ project "Hazel_DK"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/stb_image/**.h",
+        "%{prj.name}/vendor/stb_image/**.cpp",
+        "%{prj.name}/vendor/glm/glm/**.hpp",
+        "%{prj.name}/vendor/glm/glm/**.inl"
     }
 
     includedirs
@@ -49,7 +55,8 @@ project "Hazel_DK"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.stb_image}"
     }
 
     links
