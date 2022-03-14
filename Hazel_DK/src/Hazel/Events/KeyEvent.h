@@ -24,6 +24,8 @@ namespace Hazel {
 		KeyPressedEvent(int keycode, int repeatCount)
 			:KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
+		~KeyPressedEvent() = default;
+
 		inline int GetRepeatCount() const { return m_RepeatCount; }
 
 		std::string ToString() const override
@@ -45,6 +47,8 @@ namespace Hazel {
 		KeyReleasedEvent(int keycode)
 			:KeyEvent(keycode) {}
 
+		~KeyReleasedEvent() = default;
+
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -60,6 +64,8 @@ namespace Hazel {
 	public:
 		KeyTypedEvent(int keycode)
 			:KeyEvent(keycode) {}
+
+		~KeyTypedEvent() = default;
 
 		std::string ToString() const override
 		{

@@ -22,7 +22,9 @@ namespace Hazel {
 		Init(props);
 	}
 
-	WindowsWindow::~WindowsWindow() {}
+	WindowsWindow::~WindowsWindow() 
+	{
+	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{

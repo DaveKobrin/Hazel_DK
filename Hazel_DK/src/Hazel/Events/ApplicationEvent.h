@@ -8,6 +8,8 @@ namespace Hazel {
 		WindowResizeEvent(unsigned int width, unsigned int height)
 			:m_Width(width), m_Height(height) {}
 		
+		~WindowResizeEvent() = default;
+
 		inline unsigned int GetWidth() const { return m_Width; }
 		inline unsigned int GetHeight() const { return m_Height; }
 
@@ -29,6 +31,7 @@ namespace Hazel {
 	{
 	public:
 		WindowCloseEvent() = default;
+		~WindowCloseEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -46,6 +49,7 @@ namespace Hazel {
 	{
 	public:
 		AppTickEvent() = default;
+		~AppTickEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -62,6 +66,7 @@ namespace Hazel {
 	{
 	public:
 		AppUpdateEvent() = default;
+		~AppUpdateEvent() = default;
 
 		std::string ToString() const override
 		{
@@ -78,6 +83,7 @@ namespace Hazel {
 	{
 	public:
 		AppRenderEvent() = default;
+		~AppRenderEvent() = default;
 
 		std::string ToString() const override
 		{

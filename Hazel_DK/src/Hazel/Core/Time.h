@@ -7,7 +7,7 @@ namespace Hazel
 	{
 	public:
 
-		virtual ~Time() {}
+		virtual ~Time() = default;
 
 		virtual float GetTime() const = 0;
 		
@@ -21,6 +21,9 @@ namespace Hazel
 			:m_Time(time)
 		{
 		}
+
+		~DeltaTime() = default;
+		
 		operator float() const { return m_Time; }
 
 		inline float GetSeconds() const { return m_Time; }

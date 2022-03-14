@@ -10,6 +10,8 @@ namespace Hazel {
 		MouseMovedEvent(float x, float y)
 			:m_MouseX(x), m_MouseY(y) {}
 
+		~MouseMovedEvent() = default;
+
 		inline float GetX() const { return m_MouseX; }
 		inline float GetY() const { return m_MouseY; }
 
@@ -32,6 +34,8 @@ namespace Hazel {
 	public:
 		MouseScrolledEvent(float xOffset, float yOffset)
 			:m_OffsetX(xOffset), m_OffsetY(yOffset) {}
+
+		~MouseScrolledEvent() = default;
 
 		inline float GetXOffset() const { return m_OffsetX; }
 		inline float GetYOffset() const { return m_OffsetY; }
@@ -70,6 +74,8 @@ namespace Hazel {
 		MouseButtonPressedEvent(int button)
 			:MouseButtonEvent(button) {}
 
+		~MouseButtonPressedEvent() = default;
+
 		std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -86,6 +92,8 @@ namespace Hazel {
 	public:
 		MouseButtonReleasedEvent(int button)
 			:MouseButtonEvent(button) {}
+
+		~MouseButtonReleasedEvent() = default;
 
 		std::string ToString() const override
 		{

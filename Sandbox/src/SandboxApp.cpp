@@ -154,11 +154,11 @@ public:
 				
 				layout(location = 0) out vec4 color;
 
-				in vec2 TexCord;
+				in vec2 v_TexCord;
 
 				void main()
 				{
-					color = vec4(v_Color,0.0, 1.0);
+					color = vec4(v_TexCord, 0.0, 1.0);
 				}
 			)";
 

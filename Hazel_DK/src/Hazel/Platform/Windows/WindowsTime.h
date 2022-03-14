@@ -8,7 +8,8 @@ namespace Hazel
 	class WindowsTime : public Time
 	{
 	public:
-		WindowsTime() {}
+		WindowsTime() = default;
+		~WindowsTime() = default;
 
 		virtual float GetTime() const override { return (float)glfwGetTime(); }
 	};
